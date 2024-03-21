@@ -4,16 +4,23 @@ import { Spinner, Alert, Container, Carousel } from "react-bootstrap";
 
 const pb = new PocketBase("http://127.0.0.1:8090");
 
-function CustomCarousel() {
+interface CustomCarouselProps {
+    filterDate?: boolean;
+    forceCaption?: boolean;
+}
+
+const CustomCarousel: React.FC<CustomCarouselProps> = ({filterDate = true, forceCaption = false}) => {
     const { data, isLoading, error } = useQuery({
         queryFn: async () => {
             const records = await pb.collection("Post").getFullList({
                 sort: "-created",
             });
-            return records;
+            return filterDate ? records.filter(
+                (post) => new Date(post.expiringDate) > new Date()
+            ) : records;
         },
         queryKey: ["records"],
-        refetchInterval: 10000
+        refetchInterval: 60000,
     });
 
     if (isLoading)
@@ -32,21 +39,31 @@ function CustomCarousel() {
             </Container>
         );
 
-    //TODO Fix the image source
     return (
         <Carousel controls={false}>
             {data?.map((post) => (
-                <Carousel.Item key={post.id} interval={1000}>
-                    <img
-                        className="d-block w-100"
-                        src={`http://127.0.0.1:8090/api/files/${post.collectionId}/${post.id}/${post.image}`}
-                        style={{ height: "100vh", width: "100vw" }}
-                        alt={post.title}
-                    />
-                    {post.detailView && (
+                <Carousel.Item key={post.id} interval={5000}>
+                    <div
+                        style={{
+                            height: "100vh",
+                            width: "100vw",
+                            backgroundColor: "black"
+                        }}
+                    >
+                        <img
+                            className="d-block w-100"
+                            src={pb.getFileUrl(post, post.image)}
+                            style={{
+                                height: "100%",
+                                width: "100%",
+                                objectFit: "contain"
+                            }}
+                            alt={post.title}
+                        />
+                    </div>
+                    {(post.detailView || forceCaption) && (
                         <Carousel.Caption>
                             <h4 className="display">{post.title}</h4>
-                            <p>{post.description}</p>
                         </Carousel.Caption>
                     )}
                 </Carousel.Item>
