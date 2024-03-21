@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  vite-frontend:
+    build: ./frontend
+    depends_on:
+      - pocketbase
+    ports:
+      - "3000:3000"
+
+  pocketbase:
+    build: ./backend
+    ports:
+      - "8080:8080"

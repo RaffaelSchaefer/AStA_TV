@@ -5,7 +5,7 @@ function App() {
     const queryClient = new QueryClient();
     return (
         <QueryClientProvider client={queryClient}>
-            <CustomCarousel filterDate={false}/>
+            <CustomCarousel />
         </QueryClientProvider>
     );
 }

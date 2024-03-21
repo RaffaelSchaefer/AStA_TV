@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import PocketBase from "pocketbase";
 import { Spinner, Alert, Container, Carousel } from "react-bootstrap";
 
-const pb = new PocketBase("http://127.0.0.1:8090");
+const pb = new PocketBase("http://127.0.0.1:8080");
 
 interface CustomCarouselProps {
     filterDate?: boolean;
