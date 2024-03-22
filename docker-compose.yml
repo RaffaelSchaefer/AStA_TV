@@ -1,14 +1,20 @@
 version: '3.8'
 
 services:
-  vite-frontend:
-    build: ./frontend
-    depends_on:
-      - pocketbase
-    ports:
-      - "3000:3000"
 
   pocketbase:
     build: ./backend
     ports:
       - "8080:8080"
+    volumes:
+      - ./backend/pb_data:/pb/pb_data
+
+  nginx:
+    image: nginx:stable-alpine3.17-slim
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend/dist:/app/www
+    depends_on:
+      - pocketbase
